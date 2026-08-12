@@ -41,6 +41,20 @@ def plan_family(spec: dict[str, Any], geometry: dict[str, Any], standards: list[
             }
         )
 
+    # PDF-only: invent evenly spaced top terminals from datasheet terminal_count
+    if not connectors and spec.get("terminal_count"):
+        n = int(spec["terminal_count"])
+        w = float(width or 1000)
+        z = float(height or 1000) * 0.875
+        for i in range(n):
+            if n == 1:
+                x = 0.0
+            else:
+                x = -w / 2 + w * (i / (n - 1))
+            connectors.append(
+                {"system": "Power Circuit", "x": x, "y": 0.0, "z": z, "direction": "+Z"}
+            )
+
     params = [
         {"name": "Width", "type": "Length", "value": width, "group": "Dimensions"},
         {"name": "Height", "type": "Length", "value": height, "group": "Dimensions"},
