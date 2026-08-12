@@ -43,10 +43,12 @@ else
   echo "Tk window not available on this Python. Running sample job in Terminal instead…"
   echo "PDF: samples/datasheets/ABB_CB_245KV.pdf"
   mkdir -p "$HOME/Desktop/FamilyOps_Output"
+  cd python
   python -m pipeline.run_job \
-    --pdf samples/datasheets/ABB_CB_245KV.pdf \
-    --cad samples/cad/ABB_CB_245KV.dxf \
+    --pdf ../samples/datasheets/ABB_CB_245KV.pdf \
+    --cad ../samples/cad/ABB_CB_245KV.dxf \
     --out "$HOME/Desktop/FamilyOps_Output"
+  cd ..
   echo ""
   echo "Done. JSON files are on your Desktop in FamilyOps_Output"
   echo "Main file: $HOME/Desktop/FamilyOps_Output/revit_ops.json"

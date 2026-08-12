@@ -39,9 +39,10 @@ python3 -m venv python/.venv
 source python/.venv/bin/activate
 pip install -r python/requirements.txt
 
+cd python
 python -m pipeline.run_job \
-  --pdf samples/datasheets/ABB_CB_245KV.pdf \
-  --cad samples/cad/ABB_CB_245KV.dxf \
+  --pdf ../samples/datasheets/ABB_CB_245KV.pdf \
+  --cad ../samples/cad/ABB_CB_245KV.dxf \
   --out "$HOME/Desktop/FamilyOps_Output"
 ```
 
