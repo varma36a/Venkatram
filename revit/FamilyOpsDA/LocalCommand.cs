@@ -1,12 +1,14 @@
+using System.Windows.Forms;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
+using DialogResult = System.Windows.Forms.DialogResult;
 
 namespace FamilyOpsDA;
 
 /// <summary>
-/// Local Revit button for friends with desktop Revit.
-/// Reads revit_ops.json + template.rft from a folder you pick / paste.
+/// One-click Revit button: pick JSON → pick template → save .rfa folder.
+/// No coding required for the end user.
 /// </summary>
 [Transaction(TransactionMode.Manual)]
 public class RunOpsCommand : IExternalCommand
@@ -15,43 +17,65 @@ public class RunOpsCommand : IExternalCommand
     {
         try
         {
-            var ui = new TaskDialog("FamilyOpsDA")
+            string opsPath;
+            using (var dlg = new OpenFileDialog
             {
-                MainInstruction = "Generate .rfa from revit_ops.json",
-                MainContent =
-                    "Put revit_ops.json and template.rft in one folder.\n" +
-                    "Default folder: C:\\Temp\\FamilyOpsJob\\\n\n" +
-                    "Click Yes to run using that folder (create it first), " +
-                    "or copy your job files there and retry.",
-                CommonButtons = TaskDialogCommonButtons.Yes | TaskDialogCommonButtons.No
-            };
-            if (ui.Show() != TaskDialogResult.Yes)
-                return Result.Cancelled;
-
-            var folder = @"C:\Temp\FamilyOpsJob";
-            if (!Directory.Exists(folder))
+                Title = "Select the instructions file (revit_ops.json)",
+                Filter = "Instructions JSON|revit_ops.json;*.json|All files|*.*",
+                CheckFileExists = true
+            })
             {
-                message = $"Folder not found: {folder}. Create it and copy revit_ops.json + template.rft there.";
-                return Result.Failed;
+                if (dlg.ShowDialog() != DialogResult.OK)
+                    return Result.Cancelled;
+                opsPath = dlg.FileName;
             }
 
-            var prev = Directory.GetCurrentDirectory();
-            try
+            string templatePath;
+            using (var dlg = new OpenFileDialog
             {
-                Directory.SetCurrentDirectory(folder);
-                FamilyOpsApp.Run(commandData.Application.Application);
-            }
-            finally
+                Title = "Select a Revit family template (.rft)",
+                Filter = "Revit family template|*.rft|All files|*.*",
+                CheckFileExists = true
+            })
             {
-                Directory.SetCurrentDirectory(prev);
+                // Helpful default search path when present
+                var templates = @"C:\ProgramData\Autodesk";
+                if (Directory.Exists(templates))
+                    dlg.InitialDirectory = templates;
+                if (dlg.ShowDialog() != DialogResult.OK)
+                    return Result.Cancelled;
+                templatePath = dlg.FileName;
             }
 
-            TaskDialog.Show("FamilyOpsDA", $"Done. Check {folder} for result.rfa / named .rfa");
+            string outputDir;
+            using (var dlg = new FolderBrowserDialog
+            {
+                Description = "Choose where to save the new family (.rfa)",
+                UseDescriptionForTitle = true
+            })
+            {
+                dlg.SelectedPath = Path.GetDirectoryName(opsPath) ?? @"C:\Temp";
+                if (dlg.ShowDialog() != DialogResult.OK)
+                    return Result.Cancelled;
+                outputDir = dlg.SelectedPath;
+            }
+
+            FamilyOpsApp.Run(
+                commandData.Application.Application,
+                opsPath,
+                templatePath,
+                outputDir);
+
+            TaskDialog.Show(
+                "Done",
+                "Family created.\n\nLook in:\n" + outputDir +
+                "\n\nOpen the .rfa file in Revit to review it.");
             return Result.Succeeded;
         }
         catch (Exception ex)
         {
-            message = ex.ToString();
+            message = ex.Message;
+            TaskDialog.Show("Could not create family", ex.Message);
             return Result.Failed;
         }
     }
@@ -65,11 +89,15 @@ public class LocalApp : IExternalApplication
         try { application.CreateRibbonTab(tab); } catch { /* exists */ }
         var panel = application.CreateRibbonPanel(tab, "Substation");
         var asm = typeof(LocalApp).Assembly.Location;
-        panel.AddItem(new PushButtonData(
+        var btn = new PushButtonData(
             "RunOps",
-            "Build .rfa\nfrom JSON",
+            "Create family\nfrom JSON",
             asm,
-            typeof(RunOpsCommand).FullName));
+            typeof(RunOpsCommand).FullName!)
+        {
+            ToolTip = "Pick revit_ops.json and a .rft template, then save a .rfa family."
+        };
+        panel.AddItem(btn);
         return Result.Succeeded;
     }
 

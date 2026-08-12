@@ -1,0 +1,44 @@
+name: Build Datasheet Wizard (Windows exe)
+
+# Creates a double-clickable DatasheetWizard.exe for non-technical users.
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "wizard/**"
+      - "python/**"
+      - "rag/**"
+      - ".github/workflows/build-wizard-exe.yml"
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install deps + PyInstaller
+        run: |
+          python -m pip install -r python/requirements.txt pyinstaller
+      - name: Build exe
+        run: |
+          pyinstaller --noconfirm --windowed --name DatasheetWizard `
+            --paths python `
+            --add-data "rag;rag" `
+            --add-data "python;python" `
+            wizard/datasheet_wizard.py
+      - name: Stage release folder
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path dist/FriendPack | Out-Null
+          Copy-Item dist/DatasheetWizard.exe dist/FriendPack/
+          Copy-Item FOR_YOUR_FRIEND.md dist/FriendPack/
+          Copy-Item -Recurse samples dist/FriendPack/samples
+          Copy-Item -Recurse examples dist/FriendPack/examples
+          Compress-Archive -Path dist/FriendPack/* -DestinationPath DatasheetWizard-FriendPack.zip -Force
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DatasheetWizard-FriendPack
+          path: DatasheetWizard-FriendPack.zip

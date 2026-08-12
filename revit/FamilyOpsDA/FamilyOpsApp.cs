@@ -40,14 +40,23 @@ public class FamilyOpsApp : IExternalDBApplication
     internal static void Run(Application app)
     {
         var cwd = Directory.GetCurrentDirectory();
-        var opsPath = Path.Combine(cwd, "revit_ops.json");
-        if (!File.Exists(opsPath))
-            throw new FileNotFoundException("revit_ops.json not found in working directory", opsPath);
+        Run(app,
+            Path.Combine(cwd, "revit_ops.json"),
+            Path.Combine(cwd, "template.rft"),
+            cwd);
+    }
 
+    /// <summary>Local / DA entry: explicit paths for ops JSON, .rft template, and output folder.</summary>
+    internal static void Run(Application app, string opsPath, string templatePath, string outputDir)
+    {
+        if (!File.Exists(opsPath))
+            throw new FileNotFoundException("Could not find the instructions file (revit_ops.json).", opsPath);
+
+        Directory.CreateDirectory(outputDir);
         var root = JObject.Parse(File.ReadAllText(opsPath));
         var ops = (JArray?)root["ops"] ?? new JArray();
 
-        string template = "template.rft";
+        string templateHint = "template.rft";
         double widthMm = 1000, heightMm = 1000, depthMm = 1000;
         string familyFileName = "Equipment.rfa";
         var textParams = new Dictionary<string, string>();
@@ -60,10 +69,7 @@ public class FamilyOpsApp : IExternalDBApplication
             switch (op)
             {
                 case "CreateFamilyDocument":
-                    template = args.Value<string>("template") ?? template;
-                    if (!template.EndsWith(".rft", StringComparison.OrdinalIgnoreCase) &&
-                        !File.Exists(Path.Combine(cwd, template)))
-                        template = "template.rft";
+                    templateHint = args.Value<string>("template") ?? templateHint;
                     break;
                 case "CreateExtrusion":
                     widthMm = args.Value<double?>("width") ?? widthMm;
@@ -89,14 +95,13 @@ public class FamilyOpsApp : IExternalDBApplication
             }
         }
 
-        // Prefer uploaded template.rft in the DA working folder
-        var templatePath = Path.Combine(cwd, "template.rft");
         if (!File.Exists(templatePath))
         {
-            var alt = Path.Combine(cwd, template);
+            var alt = Path.Combine(Path.GetDirectoryName(opsPath) ?? outputDir, templateHint);
             if (File.Exists(alt)) templatePath = alt;
             else throw new FileNotFoundException(
-                "Family template not found. Upload template.rft as the workitem input.", templatePath);
+                "Could not find a Revit family template (.rft). Choose Electrical Equipment.rft or Generic Model.rft from your Revit templates folder.",
+                templatePath);
         }
 
         var famDoc = app.NewFamilyDocument(templatePath);
@@ -110,11 +115,10 @@ public class FamilyOpsApp : IExternalDBApplication
                 t.Commit();
             }
 
-            var outPath = Path.Combine(cwd, "result.rfa");
+            var outPath = Path.Combine(outputDir, "result.rfa");
             famDoc.SaveAs(outPath, new SaveAsOptions { OverwriteExistingFile = true });
 
-            // Also copy to planned family name for convenience when downloaded
-            var named = Path.Combine(cwd, familyFileName);
+            var named = Path.Combine(outputDir, familyFileName);
             if (!string.Equals(outPath, named, StringComparison.OrdinalIgnoreCase))
                 File.Copy(outPath, named, overwrite: true);
 
