@@ -16,7 +16,7 @@ You do **not** need Autodesk cloud (APS). Full guide: [`revit/FRIEND_REVIT_STEPS
 2. **Clone & build**
 
 ```bat
-git clone <REPO_URL>
+git clone https://github.com/varma36a/Venkatram.git
 cd Venkatram\revit\FamilyOpsDA
 dotnet build -c Release
 ```
