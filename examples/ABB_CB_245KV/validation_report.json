@@ -1,0 +1,54 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "property": "Height",
+      "expected": 3200,
+      "actual": 3200.0,
+      "tolerance": 5.0,
+      "status": "PASS"
+    },
+    {
+      "property": "Width",
+      "expected": 1800,
+      "actual": 1800.0,
+      "tolerance": 5.0,
+      "status": "PASS"
+    },
+    {
+      "property": "Depth",
+      "expected": 1200,
+      "actual": 1200.0,
+      "tolerance": 5.0,
+      "status": "PASS"
+    },
+    {
+      "property": "Weight",
+      "expected": 850.0,
+      "actual": 850.0,
+      "tolerance": 5,
+      "status": "PASS"
+    },
+    {
+      "property": "Voltage",
+      "expected": 245.0,
+      "actual": 245.0,
+      "tolerance": 0,
+      "status": "PASS"
+    },
+    {
+      "property": "Connectors",
+      "expected": 3,
+      "actual": 3,
+      "tolerance": null,
+      "status": "PASS"
+    },
+    {
+      "property": "Naming",
+      "expected": "SUB_<TYPE>_<KV>KV_<OEM>",
+      "actual": "SUB_CB_245KV_ABB",
+      "status": "PASS"
+    }
+  ],
+  "repair_hints": []
+}

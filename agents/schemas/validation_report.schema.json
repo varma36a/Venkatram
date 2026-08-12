@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "validation_report.schema.json",
+  "title": "ValidationReport",
+  "type": "object",
+  "required": ["status", "checks"],
+  "properties": {
+    "status": { "type": "string", "enum": ["PASS", "FAIL"] },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["property", "expected", "actual", "status"],
+        "properties": {
+          "property": { "type": "string" },
+          "expected": {},
+          "actual": {},
+          "tolerance": { "type": "number" },
+          "status": { "type": "string", "enum": ["PASS", "FAIL"] },
+          "message": { "type": "string" }
+        }
+      }
+    },
+    "repair_hints": { "type": "array", "items": { "type": "string" } }
+  }
+}

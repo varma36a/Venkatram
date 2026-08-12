@@ -1,0 +1,47 @@
+{
+  "units": "mm",
+  "geometry": [
+    {
+      "type": "box",
+      "width": 1800.0,
+      "height": 3200.0,
+      "depth": 1200.0,
+      "origin": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "electrical",
+      "name": "T1",
+      "x": -600.0,
+      "y": 0.0,
+      "z": 2800.0,
+      "direction": "+Z"
+    },
+    {
+      "type": "electrical",
+      "name": "T2",
+      "x": 0.0,
+      "y": 0.0,
+      "z": 2800.0,
+      "direction": "+Z"
+    },
+    {
+      "type": "electrical",
+      "name": "T3",
+      "x": 600.0,
+      "y": 0.0,
+      "z": 2800.0,
+      "direction": "+Z"
+    }
+  ],
+  "layers_used": [
+    "DIMS",
+    "ENVELOPE",
+    "TERMINALS"
+  ]
+}

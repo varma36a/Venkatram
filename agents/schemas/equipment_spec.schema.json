@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "equipment_spec.schema.json",
+  "title": "EquipmentSpecification",
+  "type": "object",
+  "required": ["equipment", "manufacturer", "model", "units"],
+  "properties": {
+    "equipment": { "type": "string", "examples": ["Circuit Breaker", "Transformer", "Switch Disconnector"] },
+    "manufacturer": { "type": "string" },
+    "model": { "type": "string" },
+    "rated_voltage_kv": { "type": "number" },
+    "height_mm": { "type": "number" },
+    "width_mm": { "type": "number" },
+    "depth_mm": { "type": "number" },
+    "weight_kg": { "type": "number" },
+    "mounting": { "type": "string" },
+    "terminal_count": { "type": "integer", "minimum": 0 },
+    "units": { "type": "string", "const": "metric" },
+    "source_files": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  }
+}

@@ -1,0 +1,173 @@
+{
+  "version": "1.0",
+  "ops": [
+    {
+      "op": "CreateFamilyDocument",
+      "args": {
+        "template": "Electrical Equipment.rft"
+      }
+    },
+    {
+      "op": "CreateReferencePlane",
+      "args": {
+        "name": "Left"
+      }
+    },
+    {
+      "op": "CreateReferencePlane",
+      "args": {
+        "name": "Right"
+      }
+    },
+    {
+      "op": "CreateReferencePlane",
+      "args": {
+        "name": "Front"
+      }
+    },
+    {
+      "op": "CreateReferencePlane",
+      "args": {
+        "name": "Back"
+      }
+    },
+    {
+      "op": "CreateReferencePlane",
+      "args": {
+        "name": "Bottom"
+      }
+    },
+    {
+      "op": "CreateReferencePlane",
+      "args": {
+        "name": "Top"
+      }
+    },
+    {
+      "op": "CreateParameter",
+      "args": {
+        "name": "Width",
+        "type": "Length",
+        "value": 1800.0,
+        "group": "Dimensions"
+      }
+    },
+    {
+      "op": "CreateParameter",
+      "args": {
+        "name": "Height",
+        "type": "Length",
+        "value": 3200.0,
+        "group": "Dimensions"
+      }
+    },
+    {
+      "op": "CreateParameter",
+      "args": {
+        "name": "Depth",
+        "type": "Length",
+        "value": 1200.0,
+        "group": "Dimensions"
+      }
+    },
+    {
+      "op": "CreateParameter",
+      "args": {
+        "name": "Rated_Voltage",
+        "type": "Number",
+        "value": 245.0,
+        "group": "Electrical"
+      }
+    },
+    {
+      "op": "CreateParameter",
+      "args": {
+        "name": "Weight",
+        "type": "Number",
+        "value": 850.0,
+        "group": "Identity Data"
+      }
+    },
+    {
+      "op": "CreateParameter",
+      "args": {
+        "name": "Manufacturer",
+        "type": "Text",
+        "value": "ABB",
+        "group": "Identity Data"
+      }
+    },
+    {
+      "op": "CreateParameter",
+      "args": {
+        "name": "Model",
+        "type": "Text",
+        "value": "CB-245",
+        "group": "Identity Data"
+      }
+    },
+    {
+      "op": "CreateParameter",
+      "args": {
+        "name": "Mounting",
+        "type": "Text",
+        "value": "Steel structure",
+        "group": "Identity Data"
+      }
+    },
+    {
+      "op": "CreateExtrusion",
+      "args": {
+        "width": 1800.0,
+        "depth": 1200.0,
+        "height": 3200.0,
+        "material": "Substation - Equipment Steel"
+      }
+    },
+    {
+      "op": "CreateConnector",
+      "args": {
+        "system": "Power Circuit",
+        "x": -600.0,
+        "y": 0.0,
+        "z": 2800.0,
+        "direction": "+Z",
+        "name": "Terminal_1"
+      }
+    },
+    {
+      "op": "CreateConnector",
+      "args": {
+        "system": "Power Circuit",
+        "x": 0.0,
+        "y": 0.0,
+        "z": 2800.0,
+        "direction": "+Z",
+        "name": "Terminal_2"
+      }
+    },
+    {
+      "op": "CreateConnector",
+      "args": {
+        "system": "Power Circuit",
+        "x": 600.0,
+        "y": 0.0,
+        "z": 2800.0,
+        "direction": "+Z",
+        "name": "Terminal_3"
+      }
+    },
+    {
+      "op": "CreateType",
+      "args": {
+        "type_name": "245kV"
+      }
+    },
+    {
+      "op": "SaveFamily",
+      "args": {
+        "path": "SUB_CB_245KV_ABB.rfa"
+      }
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+%PDF-1.4
+1 0 obj<< /Type /Catalog /Pages 2 0 R >>endobj
+2 0 obj<< /Type /Pages /Kids [3 0 R] /Count 1 >>endobj
+3 0 obj<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>endobj
+4 0 obj<< /Length 607 >>stream
+BT
+/F1 11 Tf
+1 0 0 1 50 750 Tm (SIEMENS ENERGY ? POWER TRANSFORMER DATASHEET) Tj
+1 0 0 1 50 734 Tm (Equipment: Transformer) Tj
+1 0 0 1 50 718 Tm (Manufacturer: Siemens) Tj
+1 0 0 1 50 702 Tm (Model: XFMR-132-50) Tj
+1 0 0 1 50 686 Tm (Rated Voltage: 132 kV) Tj
+1 0 0 1 50 670 Tm (Rated Power: 50 MVA) Tj
+1 0 0 1 50 654 Tm (Dimensions \(H x W x D\): 4500 mm x 3200 mm x 2800 mm) Tj
+1 0 0 1 50 638 Tm (Weight: 42000 kg) Tj
+1 0 0 1 50 622 Tm (Mounting: Concrete pad) Tj
+1 0 0 1 50 606 Tm (Terminals: 6 \(HV/LV bushings\)) Tj
+1 0 0 1 50 590 Tm (Cooling: ONAN/ONAF) Tj
+1 0 0 1 50 574 Tm (Standard: IEC 60076) Tj
+ET
+endstream
+endobj
+5 0 obj<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000056 00000 n 
+0000000111 00000 n 
+0000000235 00000 n 
+0000000891 00000 n 
+trailer<< /Size 6 /Root 1 0 R >>
+startxref
+959
+%%EOF

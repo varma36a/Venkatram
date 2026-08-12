@@ -1,0 +1,4 @@
+# Document / CAD / RAG helpers (lightweight local dry-run)
+pypdf>=4.0.0
+ezdxf>=1.1.0
+numpy>=1.26.0

@@ -1,0 +1,18 @@
+{
+  "equipment": "Circuit Breaker",
+  "manufacturer": "ABB",
+  "model": "CB-245",
+  "rated_voltage_kv": 245.0,
+  "height_mm": 3200,
+  "width_mm": 1800,
+  "depth_mm": 1200,
+  "weight_kg": 850.0,
+  "mounting": "Steel structure",
+  "terminal_count": 3,
+  "units": "metric",
+  "source_files": [
+    "../samples/datasheets/ABB_CB_245KV.pdf"
+  ],
+  "confidence": 0.9,
+  "notes": []
+}

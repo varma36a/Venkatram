@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ApplicationPackage SchemaVersion="1.0" AutodeskProduct="Revit" Name="FamilyOpsDA"
+  Description="Execute revit_ops.json and write result.rfa" AppVersion="1.0.0"
+  ProductType="Application" Author="SubstationFamilyAgent">
+  <CompanyDetails Name="SubstationFamilyAgent" />
+  <Components>
+    <RuntimeRequirements OS="Win64" Platform="Revit" SeriesMin="R2024" SeriesMax="R2026" />
+    <ComponentEntry AppName="FamilyOpsDA" ModuleName="./FamilyOpsDA.addin" AppDescription="FamilyOpsDA"
+      LoadOnCommandInvocation="False" LoadOnRevitStartup="True" />
+  </Components>
+</ApplicationPackage>

@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "geometry.schema.json",
+  "title": "CadGeometry",
+  "type": "object",
+  "required": ["geometry", "connections", "units"],
+  "properties": {
+    "units": { "type": "string", "enum": ["mm", "m"] },
+    "geometry": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type"],
+        "properties": {
+          "type": { "type": "string", "enum": ["box", "cylinder", "extrusion"] },
+          "width": { "type": "number" },
+          "height": { "type": "number" },
+          "depth": { "type": "number" },
+          "origin": {
+            "type": "object",
+            "properties": {
+              "x": { "type": "number" },
+              "y": { "type": "number" },
+              "z": { "type": "number" }
+            }
+          }
+        }
+      }
+    },
+    "connections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "x", "y", "z"],
+        "properties": {
+          "type": { "type": "string", "enum": ["electrical", "mechanical", "ground"] },
+          "name": { "type": "string" },
+          "x": { "type": "number" },
+          "y": { "type": "number" },
+          "z": { "type": "number" },
+          "direction": { "type": "string", "enum": ["+X", "-X", "+Y", "-Y", "+Z", "-Z"] }
+        }
+      }
+    },
+    "layers_used": { "type": "array", "items": { "type": "string" } }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "family_plan.schema.json",
+  "title": "FamilyPlan",
+  "type": "object",
+  "required": ["family_name", "category", "template", "parameters", "geometry_strategy", "connectors", "ops"],
+  "properties": {
+    "family_name": { "type": "string", "pattern": "^SUB_[A-Z0-9_]+$" },
+    "category": {
+      "type": "string",
+      "enum": ["Electrical Equipment", "Electrical Fixtures", "Generic Model"]
+    },
+    "template": { "type": "string" },
+    "parameters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "type", "value", "group"],
+        "properties": {
+          "name": { "type": "string" },
+          "type": { "type": "string", "enum": ["Length", "Number", "Text", "YesNo"] },
+          "value": {},
+          "group": { "type": "string" },
+          "instance": { "type": "boolean", "default": false }
+        }
+      }
+    },
+    "geometry_strategy": {
+      "type": "object",
+      "properties": {
+        "reference_planes": { "type": "array", "items": { "type": "string" } },
+        "solids": { "type": "array", "items": { "type": "object" } },
+        "materials": { "type": "array", "items": { "type": "string" } },
+        "visibility": { "type": "object" }
+      }
+    },
+    "connectors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["system", "x", "y", "z"],
+        "properties": {
+          "system": { "type": "string" },
+          "x": { "type": "number" },
+          "y": { "type": "number" },
+          "z": { "type": "number" },
+          "direction": { "type": "string" }
+        }
+      }
+    },
+    "ops": {
+      "type": "array",
+      "description": "Ordered deterministic Revit API operations",
+      "items": { "$ref": "revit_ops.schema.json#/$defs/op" }
+    },
+    "standards_applied": { "type": "array", "items": { "type": "string" } }
+  }
+}
