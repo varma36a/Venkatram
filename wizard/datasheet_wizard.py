@@ -12,33 +12,59 @@ import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 
-# Allow running from repo, wizard folder, or frozen Windows exe
-if getattr(sys, "frozen", False):
-    REPO = Path(sys._MEIPASS)  # type: ignore[attr-defined]
-    PYTHON = REPO / "python"
-else:
-    REPO = Path(__file__).resolve().parents[2]
-    PYTHON = REPO / "python"
-if str(PYTHON) not in sys.path:
-    sys.path.insert(0, str(PYTHON))
-if str(REPO / "python") not in sys.path:
-    sys.path.insert(0, str(REPO / "python"))
+def _find_repo() -> Path:
+    """Locate project root (folder that contains python/ and rag/)."""
+    if getattr(sys, "frozen", False):
+        return Path(sys._MEIPASS)  # type: ignore[attr-defined]
+
+    here = Path(__file__).resolve().parent
+    for candidate in [here, *here.parents]:
+        if (candidate / "python").is_dir() and (candidate / "rag").is_dir():
+            return candidate
+    # Fallback: wizard/ is directly under the project
+    return here.parent
+
+
+REPO = _find_repo()
+PYTHON = REPO / "python"
+for p in (PYTHON, REPO / "python"):
+    s = str(p)
+    if s not in sys.path:
+        sys.path.insert(0, s)
 
 
 def run_pipeline(pdf: Path, cad: Path | None, out: Path, log) -> None:
-    from cad_agent.parse_dxf import parse_dxf
-    from document_agent.extract import extract_text, parse_spec
-    from pipeline.planner import plan_family, validate
-    from rag.index_corpus import load_corpus, retrieve
+    try:
+        from cad_agent.parse_dxf import parse_dxf
+        from document_agent.extract import extract_text, parse_spec
+        from pipeline.planner import plan_family, validate
+        from rag.index_corpus import load_corpus, retrieve
+    except ImportError as e:
+        raise RuntimeError(
+            "Missing Python packages. Close this window, run Start-Datasheet-Wizard.bat "
+            "again and wait for 'Installing packages' to finish.\n"
+            f"Details: {e}"
+        ) from e
     import json
 
     out.mkdir(parents=True, exist_ok=True)
+    log(f"Project folder: {REPO}")
     log(f"Reading PDF: {pdf.name}")
     text = extract_text(pdf)
+    if not (text or "").strip():
+        raise RuntimeError(
+            "Could not read text from this PDF. Try the sample file:\n"
+            "samples\\datasheets\\ABB_CB_245KV.pdf"
+        )
     spec = parse_spec(text, str(pdf))
 
     if cad and cad.exists():
         log(f"Reading CAD: {cad.name}")
+        if cad.suffix.lower() == ".dwg":
+            raise RuntimeError(
+                "DWG is not supported yet. Save/export the drawing as DXF and try again.\n"
+                f"Or use the sample: samples\\cad\\ABB_CB_245KV.dxf"
+            )
         geometry = parse_dxf(cad)
     else:
         log("No CAD file — using PDF sizes only")
@@ -58,6 +84,11 @@ def run_pipeline(pdf: Path, cad: Path | None, out: Path, log) -> None:
         }
 
     corpus = REPO / "rag"
+    if not corpus.is_dir():
+        raise RuntimeError(
+            f"Cannot find the 'rag' folder next to the project.\nExpected: {corpus}\n"
+            "Re-download/unzip the full GitHub project and try again."
+        )
     query = f"{spec.get('equipment')} {spec.get('rated_voltage_kv')} kV family naming"
     log("Looking up company standards…")
     standards = retrieve(load_corpus(corpus), query, k=5)
@@ -162,10 +193,11 @@ class Wizard(tk.Tk):
                         "Give your Revit teammate the file named:\nrevit_ops.json",
                     ),
                 )
-            except Exception:
+            except Exception as e:
                 err = traceback.format_exc()
                 self.after(0, self._log, err)
-                self.after(0, lambda: messagebox.showerror("Error", "Something went wrong. See the status box."))
+                msg = str(e) if str(e) else "Something went wrong. See the status box."
+                self.after(0, lambda m=msg: messagebox.showerror("Error", m))
             finally:
                 self.after(0, lambda: self.btn.configure(state=tk.NORMAL))
 
