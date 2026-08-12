@@ -9,6 +9,7 @@ TYPE_MAP = {
     "circuit breaker": "CB",
     "transformer": "XFMR",
     "switch disconnector": "SD",
+    "disconnector": "SD",
 }
 
 
