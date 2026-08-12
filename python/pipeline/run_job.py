@@ -31,8 +31,8 @@ def _load_dotenv(path: Path) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="PDF/CAD → Revit family plan (+ optional APS .rfa)")
-    parser.add_argument("--pdf", type=Path, required=True)
-    parser.add_argument("--cad", type=Path, required=True)
+    parser.add_argument("--pdf", type=Path, required=True, help="Equipment datasheet PDF")
+    parser.add_argument("--cad", type=Path, default=None, help="Optional DXF drawing (omit if you only have PDF)")
     parser.add_argument("--corpus", type=Path, default=REPO / "rag")
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--aps", action="store_true", help="Generate real .rfa via APS Design Automation")
@@ -49,7 +49,26 @@ def main() -> None:
 
     text = extract_text(args.pdf)
     spec = parse_spec(text, str(args.pdf))
-    geometry = parse_dxf(args.cad)
+    if args.cad and args.cad.exists():
+        geometry = parse_dxf(args.cad)
+    else:
+        # PDF-only: build envelope from datasheet dimensions
+        geometry = {
+            "units": "mm",
+            "geometry": [
+                {
+                    "type": "box",
+                    "width": spec.get("width_mm") or 1000,
+                    "height": spec.get("height_mm") or 1000,
+                    "depth": spec.get("depth_mm") or 1000,
+                    "origin": {"x": 0, "y": 0, "z": 0},
+                }
+            ],
+            "connections": [],
+            "layers_used": [],
+        }
+        if not args.cad:
+            print("No CAD file — using PDF dimensions only")
 
     query = (
         f"{spec.get('equipment')} {spec.get('rated_voltage_kv')} kV "
