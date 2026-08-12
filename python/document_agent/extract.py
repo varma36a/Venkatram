@@ -10,6 +10,13 @@ def extract_text(pdf_path: Path) -> str:
     """Extract text; OCR scanned/drawing PDFs when native text is thin."""
     chunks: list[str] = []
 
+    def _usable(t: str) -> bool:
+        # Drawing PDFs often only contain a signature stamp — force OCR then.
+        if len(t) < 200:
+            return False
+        keys = ("kV", "mm", "Equipment", "Disconnector", "Breaker", "Transformer", "Dimension", "DRAWING")
+        return sum(1 for k in keys if k.lower() in t.lower()) >= 1
+
     # 1) pypdf
     try:
         from pypdf import PdfReader
@@ -21,7 +28,7 @@ def extract_text(pdf_path: Path) -> str:
         pass
 
     text = "\n".join(chunks).strip()
-    if len(text) >= 80:
+    if _usable(text):
         return text
 
     # 2) PyMuPDF native text
@@ -31,17 +38,18 @@ def extract_text(pdf_path: Path) -> str:
         doc = pymupdf.open(str(pdf_path))
         chunks = [page.get_text("text") or "" for page in doc]
         text = "\n".join(chunks).strip()
-        if len(text) >= 80:
+        if _usable(text):
             return text
     except Exception:
         pass
 
     # 3) OCR (drawing / scanned sheets)
     try:
+        import io
+
         import pymupdf
         import pytesseract
         from PIL import Image
-        import io
 
         doc = pymupdf.open(str(pdf_path))
         ocr_parts: list[str] = []
@@ -137,7 +145,7 @@ def parse_spec(text: str, source: str) -> dict[str, Any]:
 
     manufacturer = find(r"Manufacturer\s*:\s*(.+)", default=None)
     if not manufacturer:
-        if re.search(r"(?i)Grid Solutions|GE Grid", text):
+        if re.search(r"(?i)Grid Solutions|GE Grid|\bGE\b", text):
             manufacturer = "GE"
         elif re.search(r"(?i)\bABB\b", text):
             manufacturer = "ABB"
