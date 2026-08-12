@@ -8,16 +8,42 @@ PDF / CAD datasheets → JSON instructions → Revit family (`.rfa`).
 
 **Read this only:** [`FOR_YOUR_FRIEND.md`](FOR_YOUR_FRIEND.md)
 
-### Short version
+### Short version (Windows)
 
 1. Install Python once (check **Add to PATH**)
 2. Double-click **`Start-Datasheet-Wizard.bat`**
 3. Choose a **PDF** → click **Create JSON files**
 4. Send back the Output folder (especially `revit_ops.json`)
 
-Sample PDF: `samples/datasheets/ABB_CB_245KV.pdf`
+### Short version (Mac)
 
-Optional Windows exe pack: run GitHub Action **Build Datasheet Wizard** and send them the zip artifact (`DatasheetWizard.exe`).
+1. Install Python 3 if needed (`brew install python` or python.org)
+2. In Terminal:
+
+```bash
+cd /path/to/Venkatram
+chmod +x Start-Datasheet-Wizard.command
+./Start-Datasheet-Wizard.command
+```
+
+Or double-click **`Start-Datasheet-Wizard.command`** in Finder (right-click → Open the first time).
+
+3. If the GUI opens: pick PDF → **Create JSON files**  
+   If Tk is missing: it auto-runs the sample and writes to `Desktop/FamilyOps_Output`
+
+**Manual Mac command (any PDF):**
+
+```bash
+cd /path/to/Venkatram
+python3 -m venv python/.venv
+source python/.venv/bin/activate
+pip install -r python/requirements.txt
+
+python -m pipeline.run_job \
+  --pdf samples/datasheets/ABB_CB_245KV.pdf \
+  --cad samples/cad/ABB_CB_245KV.dxf \
+  --out "$HOME/Desktop/FamilyOps_Output"
+```
 
 ---
 
